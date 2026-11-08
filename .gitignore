@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+*.log
+build/
+dist/
+*.spec
+PCManager.exe
+.local-data/

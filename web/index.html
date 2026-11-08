@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>电脑管家</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%233b82f6'/><rect x='9' y='9' width='6' height='6' rx='1.5' fill='white'/><rect x='17' y='9' width='6' height='6' rx='1.5' fill='white'/><rect x='9' y='17' width='6' height='6' rx='1.5' fill='white'/><rect x='17' y='17' width='6' height='6' rx='1.5' fill='white'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">PC</div>
+      <div class="brand-text">
+        <div class="brand-title">电脑管家</div>
+        <div class="brand-sub">PC Manager</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-page="overview">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        概览
+      </button>
+      <button class="nav-item" data-page="perf">
+        <svg viewBox="0 0 24 24"><path d="M3 17l4-6 4 3 4-7 6 8"/><path d="M3 21h18"/></svg>
+        性能
+      </button>
+      <button class="nav-item" data-page="clean">
+        <svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>
+        清理
+      </button>
+      <button class="nav-item" data-page="startup">
+        <svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
+        启动项
+      </button>
+      <button class="nav-item" data-page="system">
+        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+        系统信息
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <span class="dot" id="conn-dot"></span>
+      <span id="conn-text">连接中…</span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="page active" id="page-overview">
+      <div class="page-head">
+        <h1>概览</h1>
+        <button class="btn ghost" id="overview-refresh">刷新</button>
+      </div>
+
+      <div class="grid-4">
+        <div class="card metric">
+          <div class="metric-label">CPU 使用率</div>
+          <div class="metric-value"><span id="ov-cpu">--</span><small>%</small></div>
+          <div class="bar"><i id="ov-cpu-bar"></i></div>
+          <div class="metric-foot" id="ov-cpu-foot">--</div>
+        </div>
+        <div class="card metric">
+          <div class="metric-label">内存使用率</div>
+          <div class="metric-value"><span id="ov-mem">--</span><small>%</small></div>
+          <div class="bar"><i id="ov-mem-bar"></i></div>
+          <div class="metric-foot" id="ov-mem-foot">--</div>
+        </div>
+        <div class="card metric">
+          <div class="metric-label">网络下行</div>
+          <div class="metric-value"><span id="ov-net">--</span></div>
+          <div class="metric-foot" id="ov-net-foot">--</div>
+        </div>
+        <div class="card metric">
+          <div class="metric-label">开机时长</div>
+          <div class="metric-value small" id="ov-uptime">--</div>
+          <div class="metric-foot" id="ov-boot">--</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">CPU 趋势</div>
+          <svg class="spark" id="spark-cpu" viewBox="0 0 600 120" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">内存趋势</div>
+          <svg class="spark" id="spark-mem" viewBox="0 0 600 120" preserveAspectRatio="none"></svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">本机信息</div>
+        <div class="kv-grid" id="ov-sysinfo"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-perf">
+      <div class="page-head">
+        <h1>性能</h1>
+        <span class="hint">每 1.5 秒刷新</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">CPU</span>
+            <span class="badge" id="perf-cpu-total">--%</span>
+          </div>
+          <div class="cores" id="perf-cores"></div>
+          <div class="metric-foot" id="perf-cpu-freq">--</div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">内存</span>
+            <span class="badge" id="perf-mem-total">--%</span>
+          </div>
+          <div class="bar big"><i id="perf-mem-bar"></i></div>
+          <div class="io-row"><span>已用</span><b id="perf-mem-used">--</b></div>
+          <div class="io-row"><span>可用</span><b id="perf-mem-avail">--</b></div>
+          <div class="io-row"><span>交换分区</span><b id="perf-swap">--</b></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">磁盘 IO</div>
+          <div class="io-row"><span>读取</span><b id="perf-disk-read">--</b></div>
+          <div class="io-row"><span>写入</span><b id="perf-disk-write">--</b></div>
+        </div>
+        <div class="card">
+          <div class="card-title">网络</div>
+          <div class="io-row"><span>上行</span><b id="perf-net-up">--</b></div>
+          <div class="io-row"><span>下行</span><b id="perf-net-down">--</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">占用最高的进程</div>
+        <table class="table" id="perf-procs">
+          <thead><tr><th>进程</th><th class="num">PID</th><th class="num">CPU</th><th class="num">内存</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="page" id="page-clean">
+      <div class="page-head">
+        <h1>垃圾清理</h1>
+        <div class="actions">
+          <button class="btn ghost" id="clean-scan">扫描</button>
+          <button class="btn primary" id="clean-run" disabled>立即清理</button>
+        </div>
+      </div>
+
+      <div class="card summary">
+        <div class="summary-main">
+          <div class="summary-label">可释放空间</div>
+          <div class="summary-value" id="clean-total">--</div>
+        </div>
+        <div class="summary-side">
+          <div class="hint" id="clean-hint">点击「扫描」开始检测</div>
+          <div class="hint" id="clean-progress"></div>
+        </div>
+      </div>
+
+      <div class="clean-list" id="clean-list"></div>
+      <div class="notice" id="clean-result" hidden></div>
+    </section>
+
+    <section class="page" id="page-startup">
+      <div class="page-head">
+        <h1>启动项</h1>
+        <button class="btn ghost" id="startup-refresh">刷新</button>
+      </div>
+      <div class="notice" id="startup-notice" hidden></div>
+
+      <div class="card">
+        <div class="card-title">已启用 <span class="badge" id="startup-enabled-count">0</span></div>
+        <table class="table" id="startup-enabled">
+          <thead><tr><th>名称</th><th>位置</th><th>范围</th><th class="act">操作</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">已禁用 <span class="badge" id="startup-disabled-count">0</span></div>
+        <table class="table" id="startup-disabled">
+          <thead><tr><th>名称</th><th>位置</th><th>范围</th><th class="act">操作</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="page" id="page-system">
+      <div class="page-head">
+        <h1>系统信息</h1>
+        <button class="btn ghost" id="system-refresh">刷新</button>
+      </div>
+      <div id="system-body"></div>
+    </section>
+  </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
